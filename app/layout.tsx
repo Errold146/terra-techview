@@ -1,30 +1,30 @@
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google"
+import { Space_Grotesk } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { Metadata } from "next";
+import { generateTitle } from "@/utils";
 
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const spaceGroptesk = Space_Grotesk({
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
+});
 
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'})
+export const metadata: Metadata = {
+    title: generateTitle(),
+    description: 'AI-powered app for interview practice for IT professionals'
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, "font-mono", jetbrainsMono.variable)}
-    >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
-    </html>
-  )
+export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+    return (
+        <html
+            lang="es"
+            className={`${spaceGroptesk.className} h-full`}
+            suppressHydrationWarning
+        >
+            <body className="bg-gris-100">
+                <ThemeProvider>{children}</ThemeProvider>
+            </body>
+        </html>
+    )
 }
