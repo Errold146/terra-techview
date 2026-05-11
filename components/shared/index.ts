@@ -1,4 +1,7 @@
 export { Logo } from "./Logo";
-export { NavbarMovile } from "./Navbar/NavbarMovile"
-export { Navbar } from "./Navbar/Navbar";
-export { NavbarDesktop } from "./Navbar/NavbarDesktop";
+export * from "./HeroBlock"
+export * from "./home"
+export * from "./Navbar"
+export * from "./pricing"
+export * from "./contact"
+export * from "./footer"

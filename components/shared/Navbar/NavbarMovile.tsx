@@ -30,8 +30,9 @@ export function NavbarMovile() {
 
             {/* Toggle button */}
             <Button
-                className="relative z-50 rounded-lg text-verde-500 border border-verde-300 bg-gris-100 hover:bg-verde-500 hover:text-verde-50 hover:border-transparent transition-all duration-200 px-2 py-3"
+                className="relative z-50 rounded-lg px-2 py-3"
                 onClick={() => setIsOpen(!isOpen)}
+                color="verde"
             >
                 <div className="relative w-6 h-6">
                     <FiMenu
