@@ -1,34 +1,31 @@
 import Link from "next/link";
 import { FiArrowRight, FiPlay, FiUsers, FiTrendingUp, FiBriefcase } from "react-icons/fi";
+import { contactLinks } from "@/data";
 
 export function Contact() {
     return (
         <section
             className="py-10 bg-linear-to-b from-gris-900 to-azul-950"
+            id="cta"
         >
             <div className="container mx-auto px-4">
-                <div
-                    className="max-w-4xl mx-auto text-center space-y-8"
-                >
+                <div className="max-w-4xl mx-auto text-center space-y-8">
                     <div className="space-y-4">
-                        <h2 className="text-3xl md:text-4xl lg:w-5xl font-bold text-gris-100">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gris-100">
                             Ready to Ace <br /> Your Next Interview?
                         </h2>
                         <p className="text-xl text-gris-300 max-w-2xl mx-auto leading-relaxed">
-                            Join thousands of developers who ve transformed their interview akills and landed their dream jobs. Start practicing today.
+                            Join thousands of developers who have transformed their interview skills and landed their dream jobs. Start practicing today.
                         </p>
                     </div>
 
-                    <div
-                        className="flex flex-col sm:flex-row gap-4 justify-center"
-                    >
-
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             href="/dashboard"
                             className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-verde-500 hover:bg-verde-400 text-white font-semibold text-sm shadow-lg shadow-verde-500/30 hover:shadow-verde-400/50 hover:shadow-xl transition-all duration-200"
                         >
                             <FiPlay size={15} />
-                             Start Free Trial
+                            Start Free Trial
                             <FiArrowRight
                                 size={14}
                                 className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
@@ -36,6 +33,7 @@ export function Contact() {
                         </Link>
                     </div>
 
+                    {/* Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 pt-10 border-t border-gris-700/40">
                         {[
                             { icon: FiUsers,      value: "10K+", label: "Developers Trained" },
@@ -55,6 +53,29 @@ export function Contact() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Contact info */}
+                    <div className="pt-10 border-t border-gris-700/40 flex flex-col items-center gap-5">
+                        <div className="flex flex-col gap-1 text-center">
+                            <p className="text-gris-300 text-sm font-semibold tracking-widest uppercase">Get in touch</p>
+                            <p className="text-gris-500 text-xs">Have questions? Reach out through any of these channels.</p>
+                        </div>
+
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {contactLinks.map(({ icon: Icon, label, href, color }) => (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gris-700/40 bg-gris-900/30 text-gris-400 text-sm backdrop-blur-sm transition-all duration-200 ${color}`}
+                                >
+                                    <Icon size={14} />
+                                    {label}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
