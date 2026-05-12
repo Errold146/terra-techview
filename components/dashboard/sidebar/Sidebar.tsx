@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { sidebarItems } from "@/data";
 import { AccessStatus } from "./AccessStatus";
 import { BtnCreateInterview } from "../create-interview/BtnCreateInterview";
+import { UserFooter } from "./UserFooter";
 import {
     Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton,SidebarMenuItem
 } from "@/components/ui/sidebar";
@@ -86,10 +87,9 @@ export function AppSidebar() {
             </SidebarContent>
 
             {/* Footer */}
-            <SidebarFooter className="border-t border-white/10 p-3">
-
-
+            <SidebarFooter className="border-t border-white/10 p-3 gap-2">
                 <AccessStatus />
+                <UserFooter />
             </SidebarFooter>
         </Sidebar>
     )

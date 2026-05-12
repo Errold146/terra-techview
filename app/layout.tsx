@@ -1,9 +1,10 @@
+import { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google"
+import { ClerkProvider } from "@clerk/nextjs"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Metadata } from "next";
 import { generateTitle } from "@/utils";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const spaceGroptesk = Space_Grotesk({
     variable: "--font-geist-sans",
@@ -17,14 +18,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
     return (
-        <html
-            lang="es"
-            className={`${spaceGroptesk.className} h-full`}
-            suppressHydrationWarning
-        >
-            <body className="bg-gris-100">
-                <ThemeProvider>{children}</ThemeProvider>
-            </body>
-        </html>
+        <ClerkProvider>
+            <html
+                lang="es"
+                className={`${spaceGroptesk.className} h-full`}
+                suppressHydrationWarning
+            >
+                <body className="bg-gris-100">
+                    <ThemeProvider>
+                        {children}
+                    </ThemeProvider>
+                </body>
+            </html>
+        </ClerkProvider>
     )
 }

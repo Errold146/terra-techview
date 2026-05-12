@@ -1,23 +1,28 @@
 "use client"
 
-import { SignOutIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { FiCheckCircle } from "react-icons/fi";
 
 export function StatusPaid() {
     return (
-        <div className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-white/10 cursor-pointer transition-all duration-200 group/footer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-            <div className="w-8 h-8 rounded-full bg-linear-to-br from-verde-500 to-azul-600 flex items-center justify-center shrink-0 shadow-md ring-2 ring-white/10">
-                <UserCircleIcon size={18} weight="fill" className="text-white" />
+        <div className="w-full group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:mx-auto">
+            {/* Collapsed: solo ícono */}
+            <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-verde-500/30 to-azul-500/20 border border-verde-500/30">
+                <FiCheckCircle size={16} className="text-verde-400" />
             </div>
 
-            <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                <p className="text-[15px] font-semibold text-verde-50 truncate">Full Access</p>
-                <p className="text-[12px] text-verde-300 truncate">Username</p>
+            {/* Expanded: tarjeta de plan */}
+            <div className="group-data-[collapsible=icon]:hidden flex flex-col gap-1.5 p-3 rounded-xl border border-verde-500/25 bg-verde-500/10">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                        <FiCheckCircle size={13} className="text-verde-400 shrink-0" />
+                        <span className="text-[12px] font-bold text-verde-300 uppercase tracking-widest">Pro Plan</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-verde-400/70 bg-verde-400/15 px-2 py-0.5 rounded-full">Activo</span>
+                </div>
+                <p className="text-[11px] text-white/40 leading-tight">
+                    Tienes acceso completo a todas las funciones
+                </p>
             </div>
-
-            <SignOutIcon
-                size={15}
-                className="text-verde-100 group-hover/footer:text-verde-400 transition-colors shrink-0 group-data-[collapsible=icon]:hidden"
-            />
         </div>
     )
 }
