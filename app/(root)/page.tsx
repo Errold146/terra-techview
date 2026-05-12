@@ -1,4 +1,5 @@
 import { Contact, Footer, HeroBlock, HowItWorks, Navbar, Pricing } from "@/components/shared";
+import { db } from "@/lib/db";
 
 export default function HomePage() {
     return (
