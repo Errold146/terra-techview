@@ -410,33 +410,6 @@ npm run dev
 - Optimistic UI: deleted rows removed from state immediately without page reload
 - `toast.error` added to `FormCreateInterview` catch block for visible API error feedback
 
-### Database
-- Prisma 7 setup with `prisma-client` generator outputting to `./generated/prisma`
-- `lib/db.ts`: uses `PrismaNeon` adapter over WebSockets — no TCP 5432 required at runtime
-- Custom `npm run migrate` script bypasses TCP port 5432
-- Schema models: `User`, `Interview`, `Payment`
-
-### Authentication (Clerk)
-- Integrated `@clerk/nextjs` v7 with `ClerkProvider` wrapping the full app
-- `clerkMiddleware()` applied in `middleware.ts` for route protection
-- `Show when="signed-in/out"` replaces deprecated `SignedIn`/`SignedOut` components (Clerk v7)
-- `UserFooter` sidebar component: photo, full name, sign out via `useClerk().signOut()`
-- Auth layout (`app/(auth)/layout.tsx`) with HeroBlock-style background
-
-### Dashboard — Layout & Sidebar
-- Header moved inside `SidebarProvider` so it adapts to sidebar open/closed state
-- Transparent glassmorphism pill header
-- `AppSidebar` built with shadcn/ui `collapsible="icon"` mode
-- `AccessStatus` with `StatusFreeTrial`, `StatusPaid`, `StatusPremium` plan cards
-
-### Landing Page
-- `Navbar`: sticky glassmorphism pill, `NavbarMovile` animated hamburger/X toggle
-- `HeroBlock`: decorative orbs, CSS grid overlay, badge, gradient heading via `TypeAnimation`
-- `HowItWorks`: numbered steps, connector lines, glass cards
-- `Pricing`: 3 plans (Free / Pro / Premium)
-- `Contact`: stats grid with glass cards
-- `Footer`: warning banner, columns, dynamic copyright year
-
 ---
 
 ## Branches
