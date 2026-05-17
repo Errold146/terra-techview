@@ -17,10 +17,10 @@ export function StatusPaid() {
                         <FiCheckCircle size={13} className="text-verde-400 shrink-0" />
                         <span className="text-[12px] font-bold text-verde-300 uppercase tracking-widest">Pro Plan</span>
                     </div>
-                    <span className="text-[10px] font-semibold text-verde-400/70 bg-verde-400/15 px-2 py-0.5 rounded-full">Activo</span>
+                    <span className="text-[10px] font-semibold text-verde-400/70 bg-verde-400/15 px-2 py-0.5 rounded-full">Active</span>
                 </div>
                 <p className="text-[11px] text-white/40 leading-tight">
-                    Tienes acceso completo a todas las funciones
+                    You have full access to all features
                 </p>
             </div>
         </div>

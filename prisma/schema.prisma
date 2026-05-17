@@ -32,8 +32,10 @@ model Interview {
     name        String
     rol         String
     level       String
+    language    String   @default("English")
+    createdAt   DateTime @default(now())
     startedAt   DateTime @default(now())
-    completedAt DateTime
+    completedAt DateTime?
     transcript  Json?
 }
 

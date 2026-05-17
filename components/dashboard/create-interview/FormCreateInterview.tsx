@@ -1,31 +1,50 @@
 "use client"
 
 import z from "zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
 import { formSchema } from "@/form";
-import { roles, difficulties } from "@/data";
+import { roles, difficulties, languages } from "@/data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import axios from "axios";
+import { toast } from "sonner";
 
 
 
 export function FormCreateInterview() {
+
+    const [loading, setLoading] = useState(false)
+    const router = useRouter()
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
+            name: "",
             rol: "",
-            level: ""
+            level: "",
+            language: "English"
         },
     })
 
-    function onSubmit(data: z.infer<typeof formSchema>) {
-        console.log(data)
+    async function onSubmit(data: z.infer<typeof formSchema>) {
+        setLoading(true)
+
+        try {
+            const res = await axios.post("/api/create-interview", data)
+            router.push(`/interview/${res.data.id}`)
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to create interview. Please try again.')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -49,19 +68,19 @@ export function FormCreateInterview() {
                 >
                     <FieldGroup className="gap-4">
                         <Controller
-                            name="username"
+                            name="name"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid} className="gap-2">
-                                    <FieldLabel htmlFor="username" className="text-azul-300 text-xs font-semibold uppercase tracking-widest">
+                                    <FieldLabel htmlFor="name" className="text-azul-300 text-xs font-semibold uppercase tracking-widest">
                                         Interview Name
                                     </FieldLabel>
                                     <Input
                                         {...field}
-                                        id="username"
+                                        id="name"
                                         aria-invalid={fieldState.invalid}
                                         placeholder="e.g. Frontend Developer Interview"
-                                        name="username"
+                                        name="name"
                                         className="h-10 rounded-xl border-white/15 bg-gris-900/80 text-white placeholder:text-gris-400 focus-visible:border-verde-400/70 focus-visible:ring-verde-400/20 text-sm px-4 py-3"
                                     />
                                     {fieldState.invalid && (
@@ -147,6 +166,44 @@ export function FormCreateInterview() {
                             )}
                         />
                     </FieldGroup>
+
+                    <FieldGroup>
+                        <Controller
+                            name="language"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid} className="gap-2">
+                                    <FieldLabel htmlFor="language" className="text-azul-300 text-xs font-semibold uppercase tracking-widest">
+                                        Language
+                                    </FieldLabel>
+                                    <Select value={field.value} onValueChange={field.onChange}>
+                                        <SelectTrigger
+                                            id="language"
+                                            aria-invalid={fieldState.invalid}
+                                            className="h-11 w-full rounded-xl border-white/15 bg-gris-900/80 text-white text-sm px-4 focus-visible:border-verde-400/70 focus-visible:ring-verde-400/20 data-placeholder:text-gris-400 hover:bg-gris-700 transition-colors [&_svg]:text-gris-400"
+                                        >
+                                            <SelectValue placeholder="Select a language…" />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border border-white/10 bg-gris-950 text-white shadow-xl shadow-black/40 backdrop-blur-sm">
+                                            {languages.map((lang) => (
+                                                <SelectItem
+                                                    key={lang.value}
+                                                    value={lang.value}
+                                                    className="rounded-lg text-sm text-white/80 focus:bg-verde-400/10 focus:text-white data-highlighted:bg-verde-400/10 data-highlighted:text-white cursor-pointer px-3 py-2.5"
+                                                >
+                                                    <lang.icon className="size-4 shrink-0 text-verde-400" />
+                                                    {lang.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+                    </FieldGroup>
                 </form>
             </CardContent>
 
@@ -156,6 +213,7 @@ export function FormCreateInterview() {
                         type="submit"
                         form="form-rhf-input"
                         className="h-10 px-6 rounded-lg bg-linear-to-r from-verde-500 to-azul-500 text-white font-semibold text-sm border-0 hover:from-verde-400 hover:to-azul-400 shadow-lg shadow-verde-500/25 transition-all duration-200"
+                        disabled={loading}
                     >
                         Start Interview
                     </Button>

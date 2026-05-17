@@ -17,13 +17,13 @@ export function StatusFreeTrial() {
                         <FiZap size={13} className="text-amber-400 shrink-0" />
                         <span className="text-[12px] font-bold text-amber-300 uppercase tracking-widest">Free Trial</span>
                     </div>
-                    <span className="text-[10px] font-semibold text-amber-400/70 bg-amber-400/15 px-2 py-0.5 rounded-full">Activo</span>
+                    <span className="text-[10px] font-semibold text-amber-400/70 bg-amber-400/15 px-2 py-0.5 rounded-full">Active</span>
                 </div>
                 <p className="text-[11px] text-white/40 leading-tight">
-                    Mejora tu plan para acceder a todas las funciones
+                    Upgrade your plan to access all features
                 </p>
                 <div className="mt-0.5 w-full py-1.5 rounded-lg bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-[11px] font-semibold text-center shadow-md shadow-amber-500/25 transition-all duration-200">
-                    Actualizar plan →
+                    Update plan →
                 </div>
             </div>
         </button>
