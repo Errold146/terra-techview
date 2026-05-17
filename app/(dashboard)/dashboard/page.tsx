@@ -1,6 +1,6 @@
-import { MetricCard } from "@/components/dashboard";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { InterviewList, MetricCard } from "@/components/dashboard";
 import { FiCheckCircle, FiClock, FiTrendingUp, FiClipboard, FiBatteryCharging } from "react-icons/fi";
 
 export default async function DashboardPage() {
@@ -36,12 +36,12 @@ export default async function DashboardPage() {
                     value={completedInterview.length}
                 />
                 <MetricCard
-                    icon={<FiClipboard className="text-orange-400" />}
+                    icon={<FiClipboard className="text-amber-400" />}
                     title="Total"
                     value={total}
                 />
                 <MetricCard
-                    icon={<FiClock className="text-violet-400" />}
+                    icon={<FiClock className="text-purple-400" />}
                     title="Averege Time"
                     value={`${avgDuration} min`}
                 />
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
                     </div>
                 </div>
             </div>
-
+            <InterviewList />
         </div>
     )
 }

@@ -9,6 +9,7 @@ import {
     FiStar,
     FiAward,
     FiShield,
+    FiGlobe,
 } from 'react-icons/fi'
 
 export const roles: { value: string; label: string; icon: IconType }[] = [
@@ -59,5 +60,18 @@ export const difficulties: { value: string; label: string; icon: IconType }[] = 
         value: 'senior',
         label: 'Senior',
         icon: FiShield,
+    },
+]
+
+export const languages: { value: string; label: string; icon: IconType }[] = [
+    {
+        value: 'English',
+        label: 'English',
+        icon: FiGlobe,
+    },
+    {
+        value: 'Spanish',
+        label: 'Español',
+        icon: FiGlobe,
     },
 ]

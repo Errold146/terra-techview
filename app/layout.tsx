@@ -1,10 +1,11 @@
 import { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google"
-import { ClerkProvider } from "@clerk/nextjs"
+import { Toaster } from "sonner";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Space_Grotesk } from "next/font/google";
 
-import "./globals.css"
+import "./globals.css";
 import { generateTitle } from "@/utils";
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 
 const spaceGroptesk = Space_Grotesk({
     variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
                     <ThemeProvider>
                         {children}
                     </ThemeProvider>
+                    <Toaster richColors position="top-right" />
                 </body>
             </html>
         </ClerkProvider>
