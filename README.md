@@ -410,6 +410,20 @@ npm run dev
 - Optimistic UI: deleted rows removed from state immediately without page reload
 - `toast.error` added to `FormCreateInterview` catch block for visible API error feedback
 
+### Interview Details — `interview-details` branch
+- New page at `/dashboard/interview/[id]` — interview summary with full transcript viewer
+- **Hero header**: centered layout with gradient strip (azul → verde), animated orbs, status badge (`Completed` / `Pending`), metadata chips (Role · Level · Language · Date)
+- **Back to Dashboard** button with animated left-arrow, outside the hero card
+- **`InfoCard` component** (`components/interviews/info/InfoCard.tsx`): glassmorphism card with gradient icon container, label + value, hover effects
+- **`TranscriptBox` component** (`components/interviews/info/TranscriptBox.tsx`): chat-bubble transcript viewer
+  - AI messages on the **left** (azul, `FiCpu` avatar)
+  - User messages on the **right** (verde, `FiUser` avatar)
+  - Ordered oldest → newest (reverses DB prepend order)
+  - Empty state with `FiMessageSquare` placeholder
+- **`InterviewList` action buttons** updated: Go Interview (`FiEye`, verde) · Details (`FiFileText`, azul) · Delete (dialog)
+- Interview name in list is now a clickable `<Link>` to the details page
+- **Responsiveness fixes**: `Messages.tsx` max-width typo, live interview header (`flex-col sm:flex-row`), `MetricCard` value `text-2xl md:text-3xl`
+
 ---
 
 ## Branches
@@ -420,6 +434,7 @@ npm run dev
 | `home-page` | Landing page (merged ✓) |
 | `dashboard` | Dashboard + Auth (merged ✓) |
 | `interview` | AI interview session + VAPI (merged ✓) |
+| `interview-details` | Interview summary page + transcript viewer (merged ✓) |
 
 ---
 

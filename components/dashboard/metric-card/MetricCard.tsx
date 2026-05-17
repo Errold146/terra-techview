@@ -13,7 +13,7 @@ export function MetricCard({ icon, title, value }: Props) {
                 </span>
             </div>
             <div className="flex flex-col">
-                <span className="text-3xl font-extrabold text-gris-50 leading-none">
+                <span className="text-2xl md:text-3xl font-extrabold text-gris-50 leading-none">
                     {value}
                 </span>
                 <p className="text-sm text-gris-400 mt-1 font-medium">{title}</p>

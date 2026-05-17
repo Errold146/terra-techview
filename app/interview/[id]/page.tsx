@@ -112,10 +112,10 @@ export default function InterviewPage() {
     }
 
     return (
-        <div className="max-w-6xl h-full mx-auto p-6 space-y-6 flex flex-col justify-center items-center">
-            <div className="flex items-center justify-between w-full">
+        <div className="max-w-6xl h-full mx-auto p-4 md:p-6 space-y-6 flex flex-col justify-center items-center">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3">
                 <div>
-                    <h1 className="text-2xl text-gris-100 font-bold flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl text-gris-100 font-bold flex items-center gap-2">
                         Interview in Progress
                         <span className="mr-1.5 h-3 w-3 flex items-center">
                             <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-verde-400"></span>

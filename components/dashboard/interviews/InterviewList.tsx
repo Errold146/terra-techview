@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FiEye, FiTrash2, FiCheckCircle, FiClock, FiPlusCircle, FiRefreshCw } from "react-icons/fi";
+import { FiEye, FiTrash2, FiCheckCircle, FiClock, FiPlusCircle, FiRefreshCw, FiFileText } from "react-icons/fi";
 import type { Interview } from "@/generated/prisma/client";
 
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ import {
     DialogFooter,
     DialogClose,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 export function InterviewList() {
 
@@ -126,7 +127,11 @@ export function InterviewList() {
                                     <td className="py-4 pr-4">
                                         <div className="flex gap-4 items-center">
                                             <InterviewImage interview={itv} />
-                                            <h3 className="text-xl font-semibold text-gris-100">{itv.name}</h3>
+                                            <Link
+                                                href={`/dashboard/interview/${itv.id}`}
+                                            >
+                                                <h3 className="text-xl font-semibold text-gris-100 hover:underline">{itv.name}</h3>
+                                            </Link>
                                         </div>
                                     </td>
 
@@ -164,6 +169,15 @@ export function InterviewList() {
                                                 onClick={() => handleDetailsClick(itv)}
                                             >
                                                 <FiEye />
+                                                Go Interview
+                                            </Button>
+
+                                            <Button
+                                                color="azul"
+                                                className="rounded-md px-4 py-2 flex items-center gap-2"
+                                                onClick={() => router.push(`/dashboard/interview/${itv.id}`)}
+                                            >
+                                                <FiFileText />
                                                 Details
                                             </Button>
 

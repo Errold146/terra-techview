@@ -1,12 +1,12 @@
 
-type Props = {
+export type MessageProps = {
     messages: {
         role: string
         content: string
     }[]
 }
 
-export function Messages({ messages }: Props) {
+export function Messages({ messages }: MessageProps) {
 
     return (
         <div className="overflow-y-auto scrollbar-none overflow-auto h-60 mt-4 max-w-3xl mx-auto w-full p-4 bg-gris-50/20 backdrop-blur-md border border-gris-200 rounded-lg space-y-4 shadow-sm">
@@ -23,7 +23,7 @@ export function Messages({ messages }: Props) {
                         >
                             <div
                                 className={`
-                                    maw-w-[80%] px-4 py-2 rounded-2xl shadow-md text-sm whitespace-pre-wrap ${
+                                    max-w-[80%] px-4 py-2 rounded-2xl shadow-md text-sm whitespace-pre-wrap ${
                                         isAI ? 'bg-azul-200 text-left' : 'bg-verde-200 text-right'
                                     }
                                 `}

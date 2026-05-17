@@ -18,3 +18,12 @@ export type MessageVapi = {
     transcriptType: string
     type: string
 }
+
+export type TranscriptMessageType = {
+    role: "user" | "system" | "assistant"
+    content: string
+}
+
+export type TranscriptBoxType = {
+    transcript: TranscriptMessageType[]
+}
