@@ -1,10 +1,13 @@
 "use client"
 
 import { FiStar } from "react-icons/fi";
+import { CancelPlanButton } from "@/components/shared/stripe";
 
 export function StatusPremium() {
+
     return (
-        <div className="w-full group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:mx-auto">
+        <div
+            className="w-full group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:mx-auto">
             {/* Collapsed: solo ícono */}
             <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-azul-500/30 to-pink-500/20 border border-azul-500/30">
                 <FiStar size={16} className="text-azul-400" />
@@ -22,6 +25,7 @@ export function StatusPremium() {
                 <p className="text-[11px] text-white/40 leading-tight">
                     Unlimited access and exclusive Premium features
                 </p>
+                <CancelPlanButton />
             </div>
         </div>
     )

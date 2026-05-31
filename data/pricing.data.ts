@@ -5,9 +5,10 @@ export const pricingPlansData = [
         icon: FiGift,
         name: "Free",
         price: "0",
-        description: "Perfect for getting started and exploring the platform.",
+        description: "Perfect for getting started. Includes a 30-day free trial.",
         features: [
             "1 practice interview per day",
+            "Valid for 30 days only",
             "Basic coding questions",
             "General AI feedback",
             "Community support",

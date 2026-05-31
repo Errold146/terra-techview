@@ -12,37 +12,50 @@ datasource db {
     provider = "postgresql"
 }
 
+enum Plan {
+    free
+    pro
+    premium
+}
+
 model User {
-    id               String      @id @default(cuid())
-    email            String?     @unique
-    name             String?
-    interviews       Interview[]
-    hasUsedFreeTrial Boolean     @default(false)
-    hasPaid          Boolean     @default(false)
-    paidAt           DateTime?
-    stripeCustomerId String?
-    createdAt        DateTime    @default(now())
-    payments         Payment[]
+    id                   String      @id @default(cuid())
+    email                String?     @unique
+    name                 String?
+    interviews           Interview[]
+    plan                 Plan        @default(free)
+    hasUsedFreeTrial     Boolean     @default(false)
+    hasPaid              Boolean     @default(false)
+    paidAt               DateTime?
+    canceledAt           DateTime?
+    stripeCustomerId     String?
+    stripeSubscriptionId String?
+    createdAt            DateTime    @default(now())
+    payments             Payment[]
 }
 
 model Interview {
-    id          String   @id @default(cuid())
+    id          String    @id @default(cuid())
     userId      String
-    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     name        String
     rol         String
     level       String
-    language    String   @default("English")
-    createdAt   DateTime @default(now())
-    startedAt   DateTime @default(now())
+    language    String    @default("English")
+    createdAt   DateTime  @default(now())
+    startedAt   DateTime  @default(now())
     completedAt DateTime?
     transcript  Json?
 }
 
 model Payment {
-    id        String   @id @default(cuid())
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    amount    Float
-    createdAt DateTime @default(now())
+    id                   String   @id @default(cuid())
+    userId               String
+    user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    plan                 Plan
+    amount               Float
+    stripeSessionId      String?
+    stripeSubscriptionId String?
+    status               String   @default("active")
+    createdAt            DateTime @default(now())
 }

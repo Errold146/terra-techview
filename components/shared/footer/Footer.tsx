@@ -14,7 +14,8 @@ export function Footer() {
                         <FiAlertTriangle size={15} className="text-yellow-400 shrink-0 mt-0.5" />
                         <p className="text-yellow-300/80 text-xs leading-relaxed">
                             <span className="font-semibold text-yellow-300">Practice project notice:</span>{" "}
-                            Although this platform accepts payments, <span className="font-semibold">do not enter real card details</span>. This is a student practice project — no real transactions are processed. Never share sensitive financial information.
+                            Although this platform accepts payments, <span className="font-semibold">do not enter real card details</span>. This is a student practice project — no real transactions are processed.{" "}
+                            <span className="font-semibold text-red-500">v1: Only free plan features are currently active.</span> Paid tiers are reserved for a future release.
                         </p>
                     </div>
                 </div>

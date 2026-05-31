@@ -1,10 +1,13 @@
 "use client"
 
 import { FiCheckCircle } from "react-icons/fi";
+import { CancelPlanButton } from "@/components/shared/stripe";
 
 export function StatusPaid() {
+
     return (
-        <div className="w-full group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:mx-auto">
+        <div
+            className="w-full group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:mx-auto">
             {/* Collapsed: solo ícono */}
             <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center w-9 h-9 rounded-xl bg-linear-to-br from-verde-500/30 to-azul-500/20 border border-verde-500/30">
                 <FiCheckCircle size={16} className="text-verde-400" />
@@ -22,6 +25,7 @@ export function StatusPaid() {
                 <p className="text-[11px] text-white/40 leading-tight">
                     You have full access to all features
                 </p>
+                <CancelPlanButton />
             </div>
         </div>
     )

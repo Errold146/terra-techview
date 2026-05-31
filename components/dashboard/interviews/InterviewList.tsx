@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FiEye, FiTrash2, FiCheckCircle, FiClock, FiPlusCircle, FiRefreshCw, FiFileText } from "react-icons/fi";
+import { FiEye, FiTrash2, FiCheckCircle, FiClock, FiPlusCircle, FiRefreshCw, FiFileText, FiZap } from "react-icons/fi";
 import type { Interview } from "@/generated/prisma/client";
 
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { InterviewImage } from "../interview-image/InterviewImage";
 import { BtnCreateInterview } from "../create-interview/BtnCreateInterview";
 import { FormCreateInterview } from "../create-interview/FormCreateInterview";
+import { StripeDialogPayment } from "@/components/shared/stripe/StripeDialogPayment";
 import {
     Dialog,
     DialogTrigger,
@@ -34,12 +35,17 @@ export function InterviewList() {
     const [deletingId, setDeletingId] = useState<string | null>(null)
     const [completedDialog, setCompletedDialog] = useState<Interview | null>(null)
     const [showCreateForm, setShowCreateForm] = useState(false)
+    const [dailyLimitReached, setDailyLimitReached] = useState(false)
 
     useEffect(() => {
         const fetchInterview = async () => {
             try {
-                const res = await axios('/api/interviews')
-                setInterviews(res.data)
+                const [interviewsRes, statusRes] = await Promise.all([
+                    axios('/api/interviews'),
+                    axios('/api/user/status'),
+                ])
+                setInterviews(interviewsRes.data)
+                setDailyLimitReached(statusRes.data.dailyLimitReached ?? false)
             } catch {
                 setError('Error fetching interviews')
             } finally {
@@ -260,29 +266,50 @@ export function InterviewList() {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="flex-col sm:flex-col gap-2">
-                        <DialogClose
-                            render={
-                                <Button
-                                    color="verde"
-                                    className="rounded-md px-4 py-2 flex items-center gap-2 w-full justify-center"
-                                    onClick={() => router.push(`/interview/${completedDialog?.id}`)}
-                                >
-                                    <FiRefreshCw />
-                                    Redo this interview
-                                </Button>
-                            }
-                        />
-                        <DialogClose
-                            render={
-                                <Button
-                                    className="rounded-md px-4 py-2 flex items-center gap-2 w-full justify-center bg-azul-600/30 border border-azul-400/30 text-azul-200 hover:bg-azul-600/50"
-                                    onClick={() => setShowCreateForm(true)}
-                                >
-                                    <FiPlusCircle />
-                                    Create new interview
-                                </Button>
-                            }
-                        />
+                        {dailyLimitReached ? (
+                            <div className="flex flex-col items-center gap-3 py-1">
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/15 border border-amber-400/30">
+                                    <FiZap className="text-amber-400 size-5" />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-gris-50 text-sm font-semibold">Daily limit reached</p>
+                                    <p className="text-gris-400 text-xs mt-1 leading-relaxed">
+                                        You&apos;ve used your free session for today. Upgrade your plan to practice without limits.
+                                    </p>
+                                </div>
+                                <StripeDialogPayment>
+                                    <button className="w-full py-2 px-4 rounded-lg bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-sm font-semibold text-center transition-all duration-200 shadow-md shadow-amber-500/25">
+                                        Upgrade plan →
+                                    </button>
+                                </StripeDialogPayment>
+                            </div>
+                        ) : (
+                            <>
+                                <DialogClose
+                                    render={
+                                        <Button
+                                            color="verde"
+                                            className="rounded-md px-4 py-2 flex items-center gap-2 w-full justify-center"
+                                            onClick={() => router.push(`/interview/${completedDialog?.id}`)}
+                                        >
+                                            <FiRefreshCw />
+                                            Redo this interview
+                                        </Button>
+                                    }
+                                />
+                                <DialogClose
+                                    render={
+                                        <Button
+                                            className="rounded-md px-4 py-2 flex items-center gap-2 w-full justify-center bg-azul-600/30 border border-azul-400/30 text-azul-200 hover:bg-azul-600/50"
+                                            onClick={() => setShowCreateForm(true)}
+                                        >
+                                            <FiPlusCircle />
+                                            Create new interview
+                                        </Button>
+                                    }
+                                />
+                            </>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

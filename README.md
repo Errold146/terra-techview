@@ -17,6 +17,7 @@ An AI-powered platform for interview practice aimed at IT professionals. Built w
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![VAPI](https://img.shields.io/badge/VAPI-5865F2?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxNHYtNGgtMlY4aDZ2NGgtMnY0aC0yeiIvPjwvc3ZnPg==&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
 ![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
 
@@ -35,6 +36,7 @@ An AI-powered platform for interview practice aimed at IT professionals. Built w
 | **Iconos** | `react-icons` (Feather — `fi`) + `@phosphor-icons/react` |
 | **Formularios** | React Hook Form + Zod |
 | **Fuentes** | Space Grotesk (Google Fonts via `next/font`) |
+| **Pagos** | Stripe (`stripe@22`, `@stripe/stripe-js`) — Embedded Checkout, subscriptions |
 | **Animaciones** | `react-type-animation`, `tw-animate-css` |
 
 ---
@@ -61,6 +63,14 @@ app/
       route.ts                   # GET  — fetch single interview
                                  # DELETE — delete interview (ownership check)
       complete/route.ts          # POST — save transcript + mark as completed
+    checkout/route.ts            # POST — create Stripe Embedded Checkout session
+    stripe/
+      complete/route.ts          # GET  — Stripe return URL handler (updates DB + redirects)
+      webhook/route.ts           # POST — Stripe webhook (checkout.completed, subscription.deleted)
+      cancel/route.ts            # POST — cancel active Stripe subscription
+      verify-session/route.ts    # GET  — legacy session verification (kept for reference)
+    user/
+      status/route.ts            # GET  — return current user plan from DB
 
 components/
   shared/
@@ -77,8 +87,8 @@ components/
       Sidebar.tsx                # AppSidebar (collapsible="icon")
       AccessStatus.tsx           # Selects plan component based on user plan
       StatusFreeTrial.tsx        # Free plan — amber card with upgrade button
-      StatusPaid.tsx             # Pro plan — green card
-      StatusPremium.tsx          # Premium plan — purple card
+      StatusPaid.tsx             # Pro plan — green card with cancel button
+      StatusPremium.tsx          # Premium plan — purple card with cancel button
       UserFooter.tsx             # User photo + name + sign out button
     metric-card/
       MetricCard.tsx             # Horizontal metric card (icon + value + title)
@@ -89,7 +99,12 @@ components/
       InterviewList.tsx          # Table of interviews with status, delete + detail actions
     interview-image/
       InterviewImage.tsx         # Role avatar image for each interview row
+    DashboardFooter.tsx          # Footer with security notice + contact links
     roleColors.ts                # Map of rol → Tailwind color classes
+  shared/
+    stripe/
+      StripeDialogPayment.tsx    # Stripe Embedded Checkout dialog (EmbeddedCheckoutProvider)
+      CancelPlanButton.tsx       # Inline cancel subscription button with Sonner toast
   interviews/
     messages/Messages.tsx        # Scrollable transcript panel during live call
     user-boxes/UserBoxes.tsx     # AI + User avatar boxes with call controls
@@ -101,6 +116,7 @@ data/
   sidebarItems.data.ts
   FormCreateInterview.data.ts    # roles[], difficulties[], languages[]
   infoContact.data.ts
+  stripePlans.data.ts            # Stripe Price ID map per plan (pro / premium)
 
 form/
   FormCreateInterview.form.ts    # Zod schema (name, rol, level, language)
@@ -109,11 +125,13 @@ lib/
   db.ts                          # Prisma singleton (PrismaNeon adapter, WS port 443)
   utils.ts
   vapi.sdk.ts                    # VAPI singleton instance
+  plan.ts                        # Helper: resolve user plan from DB
 
 types/
   index.ts                       # StatusCall enum, Speaker, Message, MessageVapi types
 
-middleware.ts                    # Clerk middleware (protects routes)
+proxy.ts                         # Clerk middleware (Next.js 16 convention — protects routes)
+app/not-found.tsx                # Custom 404 page ("coming in v2")
 
 prisma/
   schema.prisma                  # Data models: User, Interview, Payment
@@ -122,6 +140,9 @@ prisma/
 
 scripts/
   migrate.ts                     # Custom migration script (bypasses TCP 5432)
+  sync-payment.ts                # One-time: sync existing Stripe sessions to DB
+  test-payment.ts                # Diagnostic: show DB users, payments, Stripe sessions
+  setup-stripe.ts                # Helper: configure Stripe products/prices
 
 generated/
   prisma/                        # Prisma Client output (auto-generated)
@@ -143,6 +164,16 @@ CLERK_SECRET_KEY=sk_...
 
 # VAPI
 NEXT_PUBLIC_VAPI_API_KEY=...
+
+# Stripe (real keys in .env, Price IDs in .env.local)
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# .env.local — Stripe Price IDs
+NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=price_...
+NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID=price_...
 ```
 
 ---
@@ -166,7 +197,7 @@ Authentication is handled by **Clerk v7** with the `@clerk/nextjs` package.
 - `Show when="signed-in/out"` — conditional rendering in dashboard header
 - `SignInButton`, `SignUpButton`, `UserButton` — header auth controls
 - `UserFooter` — sidebar footer with user photo, name and sign out button
-- `clerkMiddleware()` — in `middleware.ts` protects all non-static routes
+- `clerkMiddleware()` — in `proxy.ts` (Next.js 16 middleware convention) protects all non-static routes
 - `auth()` from `@clerk/nextjs/server` — server-side user session in API routes and dashboard page
 
 ---
@@ -178,17 +209,26 @@ Authentication is handled by **Clerk v7** with the `@clerk/nextjs` package.
 ### Schema models
 
 ```prisma
+enum Plan {
+  free
+  pro
+  premium
+}
+
 model User {
-  id               String      @id @default(cuid())
-  email            String?     @unique
-  name             String?
-  hasUsedFreeTrial Boolean     @default(false)
-  hasPaid          Boolean     @default(false)
-  paidAt           DateTime?
-  stripeCustomerId String?
-  createdAt        DateTime    @default(now())
-  interviews       Interview[]
-  payments         Payment[]
+  id                   String      @id @default(cuid())
+  email                String?     @unique
+  name                 String?
+  hasUsedFreeTrial     Boolean     @default(false)
+  hasPaid              Boolean     @default(false)
+  plan                 Plan        @default(free)
+  paidAt               DateTime?
+  canceledAt           DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime    @default(now())
+  interviews           Interview[]
+  payments             Payment[]
 }
 
 model Interview {
@@ -205,10 +245,14 @@ model Interview {
 }
 
 model Payment {
-  id        String   @id @default(cuid())
-  userId    String
-  amount    Float
-  createdAt DateTime @default(now())
+  id                   String   @id @default(cuid())
+  userId               String
+  amount               Float
+  plan                 Plan     @default(free)
+  stripeSessionId      String?  @unique
+  stripeSubscriptionId String?
+  status               String   @default("active")
+  createdAt            DateTime @default(now())
 }
 ```
 
@@ -344,6 +388,11 @@ Computed server-side from the user's interviews:
 | `GET` | `/api/interview/[id]` | Returns a single interview by ID |
 | `DELETE` | `/api/interview/[id]` | Deletes an interview (verifies ownership) |
 | `POST` | `/api/interview/[id]/complete` | Saves transcript and sets `completedAt` timestamp |
+| `GET` | `/api/user/status` | Returns current user plan from DB |
+| `POST` | `/api/checkout` | Creates a Stripe Embedded Checkout session |
+| `GET` | `/api/stripe/complete` | Stripe return URL — verifies session, updates DB, redirects to /dashboard |
+| `POST` | `/api/stripe/webhook` | Handles `checkout.session.completed` and `customer.subscription.deleted` |
+| `POST` | `/api/stripe/cancel` | Cancels the user's active Stripe subscription |
 
 All routes validate the Clerk session via `auth()` and return `401` if unauthenticated. The `DELETE` route additionally returns `403` if the interview doesn't belong to the requesting user.
 
@@ -358,6 +407,8 @@ All routes validate the Clerk session via `auth()` and return `401` if unauthent
 | `npm run start` | Start production server |
 | `npm run generate` | Regenerate Prisma Client from schema |
 | `npm run migrate -- <name>` | Apply schema changes to Neon DB |
+| `npx ts-node scripts/sync-payment.ts` | Sync existing Stripe sessions to DB (one-time) |
+| `npx ts-node scripts/test-payment.ts` | Show DB users, payments and Stripe sessions |
 | `npm run lint` | Run ESLint |
 | `npm run format` | Prettier format all `.ts/.tsx` files |
 | `npm run typecheck` | TypeScript type check (no emit) |
@@ -410,6 +461,26 @@ npm run dev
 - Optimistic UI: deleted rows removed from state immediately without page reload
 - `toast.error` added to `FormCreateInterview` catch block for visible API error feedback
 
+### Payments & Subscriptions — `payments` branch
+- **Stripe Embedded Checkout** (`ui_mode: "embedded_page"`) with `EmbeddedCheckoutProvider` + `EmbeddedCheckout`
+- `POST /api/checkout` — creates Stripe checkout session (subscription mode, `pro` / `premium`)
+- `GET /api/stripe/complete` — server-side return URL handler: verifies payment, `upsert` User plan in DB, creates Payment record, redirects to `/dashboard`
+- `POST /api/stripe/webhook` — handles `checkout.session.completed` (full data save) and `customer.subscription.deleted` (resets plan to `free`)
+- `POST /api/stripe/cancel` — cancels active subscription, resets User to `plan: free`, marks `canceledAt`, updates Payment status to `"canceled"`
+- `GET /api/user/status` — returns current user plan from DB for sidebar `AccessStatus`
+- **Plan enum** added to Prisma schema: `free | pro | premium`
+- **User** extended with `plan`, `canceledAt`, `stripeSubscriptionId` fields
+- **Payment** extended with `plan`, `stripeSessionId` (unique), `stripeSubscriptionId`, `status` fields
+- `AccessStatus` starts as `null` (no Free Trial flash while loading)
+- `CancelPlanButton` in `StatusPaid` / `StatusPremium` — in-line cancel with Sonner toast
+- `StripeDialogPayment` — dialog with Stripe embedded checkout UI
+- `lib/plan.ts` — helper to resolve user plan from DB
+- `proxy.ts` replaces `middleware.ts` (Next.js 16 middleware convention for Clerk)
+- Custom 404 page at `app/not-found.tsx` — styled with brand colors, "coming in v2" badge
+- `DashboardFooter` — security notice (no real card data) + contact links
+- `scripts/sync-payment.ts` — one-time sync of existing Stripe sessions to DB
+- `scripts/test-payment.ts` — diagnostic: show DB users, payments, Stripe sessions
+
 ### Interview Details — `interview-details` branch
 - New page at `/dashboard/interview/[id]` — interview summary with full transcript viewer
 - **Hero header**: centered layout with gradient strip (azul → verde), animated orbs, status badge (`Completed` / `Pending`), metadata chips (Role · Level · Language · Date)
@@ -435,6 +506,7 @@ npm run dev
 | `dashboard` | Dashboard + Auth (merged ✓) |
 | `interview` | AI interview session + VAPI (merged ✓) |
 | `interview-details` | Interview summary page + transcript viewer (merged ✓) |
+| `payments` | Stripe subscriptions, plan management, custom 404, dashboard footer (merged ✓) |
 
 ---
 
