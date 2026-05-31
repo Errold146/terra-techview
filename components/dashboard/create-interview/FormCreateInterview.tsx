@@ -41,7 +41,18 @@ export function FormCreateInterview() {
             router.push(`/interview/${res.data.id}`)
         } catch (error) {
             console.error(error);
-            toast.error('Failed to create interview. Please try again.')
+            if (axios.isAxiosError(error)) {
+                const code = error.response?.data?.error
+                if (code === "free_trial_expired") {
+                    toast.error("Your free trial has expired. Upgrade your plan to keep practicing.")
+                } else if (code === "daily_limit_reached") {
+                    toast.error("You've reached your 1 interview/day limit on the free plan. Come back tomorrow or upgrade.")
+                } else {
+                    toast.error("Failed to create interview. Please try again.")
+                }
+            } else {
+                toast.error("Failed to create interview. Please try again.")
+            }
         } finally {
             setLoading(false)
         }

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { generateTitle } from "@/utils";
-import { AppSidebar } from "@/components/dashboard";
+import { AppSidebar, DashboardFooter } from "@/components/dashboard";
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
@@ -46,6 +46,7 @@ export default function DashboardLayout({children}: {children: React.ReactNode})
                         <main className="flex-1 p-6">
                             {children}
                         </main>
+                        <DashboardFooter />
                     </div>
                 </SidebarProvider>
             </TooltipProvider>

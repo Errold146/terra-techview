@@ -83,6 +83,26 @@ export default function InterviewPage() {
 
     const startCall = async () => {
         setCallStatus(StatusCall.CONNECTING)
+
+        try {
+            const startRes = await axios.post(`/api/interview/${interviewId}/start`)
+            if (!startRes.data?.ok) throw new Error("start rejected")
+        } catch (error) {
+            setCallStatus(StatusCall.INACTIVE)
+            if (axios.isAxiosError(error)) {
+                const code = error.response?.data?.error
+                if (code === "free_trial_expired") {
+                    toast.error("Your free trial has expired. Upgrade your plan to keep practicing.")
+                } else if (code === "daily_limit_reached") {
+                    toast.error("You've already used your daily session on the free plan. Come back tomorrow or upgrade.")
+                } else {
+                    toast.error("Could not start the interview. Please try again.")
+                }
+            }
+            router.push("/dashboard")
+            return
+        }
+
         const assistantOverrides = {
             variableValues: {
                 topic: `Rol: ${interview?.rol} Level: ${interview?.level}`,

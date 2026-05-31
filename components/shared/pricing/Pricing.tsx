@@ -1,8 +1,12 @@
+"use client"
+
 import Link from "next/link";
 import { FiCheck } from "react-icons/fi";
 import { pricingPlansData } from "@/data";
+import { StripeDialogPayment } from "@/components/shared/stripe/StripeDialogPayment";
 
 export function Pricing() {
+
     return (
         <section
             className="py-24 bg-linear-to-b from-verde-900 to-gris-900"
@@ -25,6 +29,7 @@ export function Pricing() {
                     {pricingPlansData.map((plan, index) => {
                         const Icon = plan.icon
                         const isPro = plan.popular
+                        const isFree = plan.price === "0"
 
                         return (
                             <div
@@ -71,7 +76,7 @@ export function Pricing() {
                                             <span className="text-gris-500 text-sm mb-1">/mo</span>
                                         )}
                                         {plan.price === "0" && (
-                                            <span className="text-verde-400 text-sm mb-1 font-medium">free forever</span>
+                                            <span className="text-verde-400 text-sm mb-1 font-medium">30-day trial</span>
                                         )}
                                     </div>
 
@@ -93,16 +98,26 @@ export function Pricing() {
                                     </ul>
 
                                     {/* CTA */}
-                                    <Link
-                                        href="/dashboard"
-                                        className={`mt-2 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200
-                                            ${isPro
-                                                ? "bg-verde-500 hover:bg-verde-400 text-white shadow-lg shadow-verde-500/30 hover:shadow-verde-400/40"
-                                                : "border border-gris-600 hover:border-azul-400/60 text-gris-300 hover:text-azul-300 bg-white/5 hover:bg-azul-500/10"
-                                            }`}
-                                    >
-                                        {plan.buttonText}
-                                    </Link>
+                                    {isFree ? (
+                                        <Link
+                                            href="/sign-in"
+                                            className="mt-2 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 border border-gris-600 hover:border-azul-400/60 text-gris-300 hover:text-azul-300 bg-white/5 hover:bg-azul-500/10"
+                                        >
+                                            {plan.buttonText}
+                                        </Link>
+                                    ) : (
+                                        <StripeDialogPayment>
+                                            <button
+                                                className={`mt-2 w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200
+                                                    ${isPro
+                                                        ? "bg-verde-500 hover:bg-verde-400 text-white shadow-lg shadow-verde-500/30 hover:shadow-verde-400/40"
+                                                        : "border border-gris-600 hover:border-azul-400/60 text-gris-300 hover:text-azul-300 bg-white/5 hover:bg-azul-500/10"
+                                                    }`}
+                                            >
+                                                {plan.buttonText}
+                                            </button>
+                                        </StripeDialogPayment>
+                                    )}
                                 </div>
                             </div>
                         )

@@ -12,3 +12,5 @@ export { AppSidebar } from "./sidebar/Sidebar";
 export { StatusPaid } from "./sidebar/StatusPaid";
 export { AccessStatus } from "./sidebar/AccessStatus";
 export { StatusFreeTrial } from "./sidebar/StatusFreeTrial";
+
+export { DashboardFooter } from "./DashboardFooter";
